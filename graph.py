@@ -6,9 +6,9 @@ height = 600
 width = 600
 
 # number of tracks for each category
-n_arr = 6
-n_shun = 8
-n_dept = 2
+n_arr = 3
+n_shun = 3
+n_dept = 3
 
 # lists in which the tracks will be saved
 arr_tracks = []
