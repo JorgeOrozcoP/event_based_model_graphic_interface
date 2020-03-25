@@ -28,14 +28,19 @@ Track('a','b')
 t_message = []  # store in t_message[0] the displayed text
 
 
-def change_color(track, track_n, win, color):
+def change_color(track_list, track_n, win, color):
     '''Given a track, change the color on the UI'''
     time.sleep(1)
 
-    selected_track = Rectangle(track.getP1(), track.getP2())
+    track_list[track_n].rectangle.setFill(color)
 
-    selected_track.setFill(color)
-    selected_track.draw(win)
+    win.update()
+
+
+def change_message(track_list, track_n, win, new_text):
+    '''Given a track, change the text on the UI'''
+    track_list[track_n].message.setMessage(new_text)
+
     win.update()
 
 
@@ -66,28 +71,21 @@ def initialize(win):
     # x coords of points where dept, shunt and dept tracks join
     track_union_coords = [200, 400]
 
-
-    # Arrival tracks
-
-
-    # on x coords for blocks
-
-    block_limits = [20,100,180]
-    left_block_limit = 20
-    right_block_limit = 180
-    block_center = 100
-
     middle_shunting_y_coord = get_middle_point_4_lines(n_shun, 
         track_height, spacing, initial_space)
 
 
+    # Arrival tracks ======================
+
+    # on x coords for blocks
+
+    left_block_limit = 20
+    right_block_limit = 180
+    block_center = 100
+
     arr_text = Text(Point(100,50), "Arrival Tracks")
     arr_text.setSize(12)
     arr_text.draw(win)
-
-
-    def create_tracks_in_interface(track_list, win, p):
-        pass
 
     for arr in range(n_arr):
 
@@ -100,11 +98,7 @@ def initialize(win):
 
         arr_tracks.append(track)
 
-        # arr_tracks.append(Rectangle(Point(20,drawing_point), 
-        #     Point(180,drawing_point + track_height)))
-
         arr_tracks[arr].rectangle.setFill('green')
-
         arr_tracks[arr].rectangle.draw(win)
 
         arr_tracks[arr].message.draw(win)
@@ -119,7 +113,11 @@ def initialize(win):
         line.draw(win) 
 
 
-    # Shunting tracks
+    # Shunting tracks ======================
+
+    left_block_limit = 220
+    right_block_limit = 380
+    block_center = 300
 
     shunting_text = Text(Point(300,50), "Classification Tracks")
     shunting_text.setSize(12)
@@ -129,15 +127,18 @@ def initialize(win):
 
         drawing_point = (shu * track_height) + (shu * spacing) + initial_space
 
-        shunt_tracks.append(Rectangle(Point(220,drawing_point), 
-            Point(380,drawing_point + track_height)))
 
-        shunt_tracks[shu].setFill('green')
-        shunt_tracks[shu].draw(win)
-
-        shunt_messages.append(Text(Point(300,drawing_point + (track_height / 2)), 
+        track = Track(Rectangle(Point(left_block_limit,drawing_point), 
+            Point(right_block_limit,drawing_point + track_height)), 
+            Text(Point(block_center,drawing_point + (track_height / 2)), 
             "0"))
-        shunt_messages[shu].draw(win)
+
+        shunt_tracks.append(track)
+
+        shunt_tracks[shu].rectangle.setFill('green')
+        shunt_tracks[shu].rectangle.draw(win)
+
+        shunt_tracks[shu].message.draw(win)
 
 
         # lines
@@ -146,18 +147,22 @@ def initialize(win):
 
         # lines from arrival
         line = Line(Point(track_union_coords[0], middle_shunting_y_coord), 
-                    Point(220, middle_track_y_coord))
+                    Point(left_block_limit, middle_track_y_coord))
         line.setWidth(line_width)
         line.draw(win) 
 
         # lines to departure
-        line = Line(Point(380, middle_track_y_coord), 
+        line = Line(Point(right_block_limit, middle_track_y_coord), 
                     Point(track_union_coords[1], middle_shunting_y_coord))
         line.setWidth(line_width)
         line.draw(win) 
 
 
-    # Departure tracks
+    # Departure tracks ======================
+
+    left_block_limit = 420
+    right_block_limit = 580
+    block_center = 500
 
     departure_text = Text(Point(500,50), "Departure Tracks")
     departure_text.setSize(12)
@@ -167,16 +172,17 @@ def initialize(win):
 
         drawing_point = (dep * track_height) + (dep * spacing) + initial_space
 
-        dept_tracks.append(Rectangle(Point(420,drawing_point), 
-            Point(580,drawing_point + track_height)))
-
-        dept_tracks[dep].setFill('green')
-        dept_tracks[dep].draw(win)
-
-
-        dept_messages.append(Text(Point(500,drawing_point + (track_height / 2)), 
+        track = Track(Rectangle(Point(left_block_limit,drawing_point), 
+            Point(right_block_limit,drawing_point + track_height)), 
+            Text(Point(block_center,drawing_point + (track_height / 2)), 
             "0"))
-        dept_messages[dep].draw(win)
+
+        dept_tracks.append(track)
+
+        dept_tracks[dep].rectangle.setFill('green')
+        dept_tracks[dep].rectangle.draw(win)
+
+        dept_tracks[dep].message.draw(win)
 
         # lines
         middle_track_y_coord = get_middle_track_y_coord(drawing_point, 
@@ -184,7 +190,7 @@ def initialize(win):
 
         # lines from shunting
         line = Line(Point(track_union_coords[1], middle_shunting_y_coord), 
-                    Point(420, middle_track_y_coord))
+                    Point(left_block_limit, middle_track_y_coord))
         line.setWidth(line_width)
         line.draw(win) 
 
@@ -209,26 +215,19 @@ def main():
     # initialize the empty tracks
     initialize(win)
 
-    # TODO: control the movement in time
-
-    # TODO: create log... maybe this is a part for the matrixes
-
-    # TODO: be able to move forward-backards in time
-
-    # TODO: be able to add delay to matrix
 
 
     # example on changing colors
     # input("Press Enter to continue...")
 
     change_t(200)
-    change_color(arr_tracks[0],0, win, 'red')
+    change_color(arr_tracks,0, win, 'red')
 
     change_t(250)
-    change_color(shunt_tracks[2],2, win, 'red')
+    change_color(shunt_tracks,2, win, 'red')
 
     change_t("11:30")
-    change_color(dept_tracks[1],1, win, 'red')
+    change_color(dept_tracks,1, win, 'red')
 
 
     # any code goes before this
